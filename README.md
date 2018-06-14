@@ -9,6 +9,7 @@ Libraries Used:
 ---
 
 **leap-0.6.4.js** from [official Leap Motion Javascript library](https://github.com/leapmotion/leapjs)
+
 **jquery-1.9.0.min.js** from [official jquery API](https://blog.jquery.com/2013/01/15/jquery-1-9-final-jquery-2-0-beta-migrate-final-released/)
 
 
