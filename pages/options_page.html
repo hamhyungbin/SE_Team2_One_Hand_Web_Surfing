@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+	<head>
+		<title>One Hand Web Surfing</title>
+
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,600,300,800" />
+		<style>
+		body {
+			min-width: 357px;
+			overflow-x: hidden;
+			font-family: 'Open Sans', sans-serif;
+			padding: 20px;
+			margin: 0;
+		}
+		h1 {
+			background: url('img/icon_32.png') center left no-repeat;
+			height: 32px;
+			line-height: 32px;
+			text-indent: 50px;
+			font-size: 24px;
+			color: #666;
+			margin: 0;
+			margin-bottom: 20px;
+			padding: 0;
+			font-weight: normal;
+		}
+		p {
+			margin: 0;
+			padding: 0;
+			line-height: 30px;
+		}
+		p span {
+			color: #CCC;
+			font-size: 24px;
+			line-height: 30px;
+		}
+		a {
+			text-decoration: none;
+			color: #9ac847;
+			outline: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+		button {
+			background-color: #9ac847;
+			color: #fff;
+			border: none;
+			padding: 10px 20px;
+			cursor: pointer;
+			font-size: 16px;
+			margin: 0;
+			margin-top: 30px;
+		}
+		button:hover {
+			background-color: #8cb641;
+		}
+		#status
+		{
+			background-color: #9ac847;
+			color: #fff;
+			padding: 5px 0;
+			text-align: center;
+			width: 150px;
+			position: absolute;
+			top: 20px;
+			right: 20px;
+			display: none;
+		}
+		.header {
+			border-bottom: 1px dotted #DDD;
+		}
+		.footer {
+			margin-top: 50px;
+			text-align: center;
+			border-top: 1px dotted #DDD;
+			padding-top: 20px;
+			color: #EEE;
+		}
+		.footer a {
+			font-size: 12px;
+			color: #BBB;
+			white-space: nowrap;
+		}
+		.footer a:hover {
+			text-decoration: none;
+			color: #9ac847;
+		}
+		.options_label
+		{
+			text-transform: uppercase;
+			font-size: 20px;
+			margin-bottom: 20px;
+			color: #999;
+			margin-top: 30px;
+		}
+		label {
+			width: 150px;
+			display: block;
+			float: left;
+		}
+		select {
+			width: 100px;
+			margin-right: 25px;
+		}
+		.description
+		{
+			font-size: 12px;
+			white-space: nowrap;
+		}
+		#reset
+		{
+			background-color: #999;
+		}
+		#reset:hover
+		{
+			background-color: #888;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+
+			<h1>One Hand Web Surfing</h1>
+		</div>
+
+		<div id="status">Options Saved</div>
+
+		<p class="options_label">Hand</p>
+
+		<p>
+			<label for="user_prefer_hand">Prefered Hand:</label>
+			<select id="user_prefer_hand" name="user_prefer_hand">
+				<option value="left">Left</option>
+				<option value="right">Right</option>
+			</select>
+			<span class="description">Choose User Prefered Hand, Left or Right</span>
+		</p>
+
+		<p class="options_label">Fingers</p>
+
+		<p>
+			<label for="fingers">Show Fingers:</label>
+			<select id="fingers" name="fingers">
+				<option value="yes">Yes</option>
+				<option value="no">No</option>
+			</select>
+			<span class="description">Display Finger Locations on Screen</span>
+		</p>
+
+
+
+		<p>
+			<label for="color">Finger Colors:</label>
+			<select id="color" name="color">
+				<option value="rainbow">Rainbow</option>
+				<option value="leap">Leap Green</option>
+				<option value="dark">Dark</option>
+				<option value="light">Light</option>
+			</select>
+			<span class="description">Colors Used to Indicate Fingers</span>
+		</p>
+		
+		<p class="options_label">Behaviors 
+			<a href="../pages/helping_page.html" target="_blank"> (Gesture Guide)</a>
+		</p>
+
+		<p>
+			<label for="click">Click:</label>
+			<select id="click" name="click">
+				<option value="enabled">Enabled</option>
+				<option value="disabled">Disabled</option>
+			</select>
+			<span class="description">Move Index Finger towards Front for Click Event</span>
+		</p>
+
+		<p>
+			<label for="scrolling">Page Scrolling:</label>
+			<select id="scrolling" name="scrolling">
+				<option value="enabled">Enabled</option>
+				<option value="disabled">Disabled</option>
+			</select>
+			<span class="description">Move Index, Middle, Ring, and Pinky Finger Upwards and Downwards for Scroll Event</span>
+		</p>
+
+		<p>
+			<label for="history">History Swipe:</label>
+			<select id="history" name="history">
+				<option value="enabled">Enabled</option>
+				<option value="disabled">Disabled</option>
+			</select>
+			<span class="description">Swipe Both Index and Middle Finger toward Leftwards to Go Back, and Rightwards to Go Forward</span>
+		</p>
+
+		<p>
+			<label for="open_or_close_tab">Open or Close Tab:</label>
+			<select id="open_or_close_tab" name="open_or_close_tab">
+				<option value="enabled">Enabled</option>
+				<option value="disabled">Disabled</option>
+			</select>
+			<span class="description">Swipe Index, Middle, and Ring Finger Upwards to Open Tab or Downwards to Close Tab</span>
+		</p>
+
+		<p>
+			<label for="switch_tab">Switch Tab:</label>
+			<select id="switch_tab" name="switch_tab">
+				<option value="enabled">Enabled</option>
+				<option value="disabled">Disabled</option>
+			</select>
+			<span class="description">Swipe Index, Middle, and Ring Finger Leftwards for Left Tab or Rightwards for Right Tab</span>
+		</p>
+
+		<p>
+			<label for="zoom">Page Zoom:</label>
+			<select id="zoom" name="zoom">
+				<option value="enabled">Enabled</option>
+				<option value="disabled">Disabled</option>
+			</select>
+			<span class="description">Open Hand and Pinch/Zoom with All Fingers</span>
+		</p>
+
+		<button id="save">Save</button>
+		<button id="reset">Reset</button>
+
+		<div class="footer">
+			<a href="https://www.dropbox.com/s/nxygyb5hkvs3c80/Team%202%2C%20One%20Hand%20Web%20Surfing.mp4?dl=0" target="_blank">Intro Video</a>
+			&nbsp;&nbsp;|&nbsp;&nbsp;
+			<a href="http://www.leapmotion.com/" target="_blank">Leap Motion Website</a>
+			&nbsp;&nbsp;|&nbsp;&nbsp;
+			<a href="https://developer.leapmotion.com/" target="_blank">Leap Motion Developer Portal</a>
+			&nbsp;&nbsp;|&nbsp;&nbsp;
+			<a href="https://github.com/hamhyungbin/SE_Team2_One_Hand_Web_Surfing" target="_blank">Chrome Extension Source</a>
+		</div>
+
+		<script src="../js/jquery-1.9.0.min.js"></script>
+		<script src="../js/options_page.js"></script>
+	</body>
+</html>
