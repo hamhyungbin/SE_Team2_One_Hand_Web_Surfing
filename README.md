@@ -1,6 +1,7 @@
 
 Leap Motion Chrome Extension
 ===
+This is a project for class made by SungKyunKwan University students. Thus, it is for learning purpose, do not use on public domain.
 
 Watch Intro Video: [https://www.dropbox.com/s/nxygyb5hkvs3c80/Team%202%2C%20One%20Hand%20Web%20Surfing.mp4?dl=0](https://www.dropbox.com/s/nxygyb5hkvs3c80/Team%202%2C%20One%20Hand%20Web%20Surfing.mp4?dl=0)
 
