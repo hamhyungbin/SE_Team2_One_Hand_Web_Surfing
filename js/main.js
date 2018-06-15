@@ -500,10 +500,10 @@ function update_settings()
 	});
 
 	// Fetch Leap Motion Settings for Switch Tab
-	chrome.storage.local.get('leap_motion_switchTab', function(fetchedData) {
-		if(typeof fetchedData.leap_motion_switchTab !== 'undefined')
+	chrome.storage.local.get('leap_motion_switch_tab', function(fetchedData) {
+		if(typeof fetchedData.leap_motion_switch_tab !== 'undefined')
 		{
-			leap_motion_settings.switch_tab = fetchedData.leap_motion_switchTab;
+			leap_motion_settings.switch_tab = fetchedData.leap_motion_switch_tab;
 		}
 	});
 
