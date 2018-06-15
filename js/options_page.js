@@ -8,7 +8,6 @@ function save_options()
 		'leap_motion_click': jQuery('#click').val(),
 		'leap_motion_scrolling': jQuery('#scrolling').val(),
 		'leap_motion_history': jQuery('#history').val(),
-		'leap_motion_bookmark': jQuery('#view_bookmark').val(),
 		'leap_motion_open_or_close_tab': jQuery('#open_or_close_tab').val(),
 		'leap_motion_switchTab': jQuery('#switch_tab').val(),
 		'leap_motion_zoom': jQuery('#zoom').val()
@@ -30,7 +29,6 @@ function reset_options()
 		'leap_motion_click': 'enabled',
 		'leap_motion_scrolling': 'enabled',
 		'leap_motion_history': 'enabled',
-		'leap_motion_bookmark': 'enabled',
 		'leap_motion_open_or_close_tab': 'enabled',
 		'leap_motion_switchTab': 'enabled',		
 		'leap_motion_zoom': 'disabled'
@@ -42,7 +40,6 @@ function reset_options()
 	jQuery('#click').val('enabled');
 	jQuery('#scrolling').val('enabled');
 	jQuery('#history').val('enabled');
-	jQuery('#view_bookmark').val('enabled');
 	jQuery('#open_or_close_tab').val('enabled');
 	jQuery('#switch_tab').val('enabled');
 	jQuery('#zoom').val('disabled');
@@ -64,7 +61,6 @@ function restore_options()
 		'click': 'enabled',
 		'scrolling': 'enabled',
 		'history': 'enabled',
-		'view_bookmark': 'enabled',
 		'open_or_close_tab': 'enabled',
 		'switch_tab': 'enabled',
 		'zoom': 'disabled'
@@ -128,16 +124,6 @@ function restore_options()
 		}
 
 		jQuery('#history').val(leap_motion_settings.history);
-	});
-
-	// Fetch Leap Motion Settings for Viewing Bookmark
-	chrome.storage.local.get('leap_motion_bookmark', function(fetchedData) {
-		if(typeof fetchedData.leap_motion_bookmark !== 'undefined')
-		{
-			leap_motion_settings.view_bookmark = fetchedData.leap_motion_bookmark;
-		}
-
-		jQuery('#view_bookmark').val(leap_motion_settings.view_bookmark);
 	});
 
 	// Fetch Leap Motion Settings for Open or Closing Tab
