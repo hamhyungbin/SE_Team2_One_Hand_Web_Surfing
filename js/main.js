@@ -52,7 +52,10 @@ var leap_motion_settings = {
 // Update Settings from Browser Extension
 update_settings();
 
-// called when a tab is updated (like changed away from, or refreshed, or loaded)
+// Start the leap motion connection
+controller.connect();
+
+// Called when a tab is updated (like changed away from, or refreshed, or loaded)
 chrome.storage.onChanged.addListener(update_settings);
 
 // Once Settings are Updates, Initialize Extension
@@ -87,7 +90,7 @@ function check_focus()
 		{
 			document.location.reload(true);
 		}
-		// Something else went wrong
+		// Else if other error occur
 		else
 		{
 			console.error(error.message);
@@ -98,12 +101,14 @@ function check_focus()
 // Function to get extended finger on array - [0,1,1,0,0], where 1 is for extended finger
 function getExtendedFingers(frame){
 	var extendedFingers = new Array();
+	
 	if(frame.valid){
 		if(frame.fingers.length > 0)
 		{
 			for(var j=0; j < 5; j++)
 			{
 				var finger = frame.fingers[j];
+				// Put 1 to array if an extended finger present
 				if(finger.extended) extendedFingers[j] = 1;
 				else{ extendedFingers[j] = 0; }
 			}
@@ -126,10 +131,12 @@ function getExtendedFingersCount(extendedFingers){
 // Add DOM Elements to Page to Render Fingers
 function add_fingers()
 {
+	// Only allow one hand, thus loop until 5 only
 	for(var i=0; i<5; i++)
 	{
 		$('body').append('<div class="finger" id="finger'+ (i+1) +'"><\/div>');
 
+		// Only add the finger according to user preferences
 		switch(leap_motion_settings.color)
 		{
 			case 'rainbow':
@@ -192,22 +199,25 @@ function update_fingers(frame)
 		return;
 	}
 
-	// Make sure there are at least two fingers to render, since that is the minimum for an action
-	// Also prevents forehead / face from registering as a finger during typing
+	// Make sure frame is valid and to normalize the finger
+	// So that the finger object will mapped accordingly to the chrome window
 	if(frame.valid){
-		var iBox = frame.interactionBox;
+		var iBox = frame.interactionBox; // Get the virtual space
 		if(frame.fingers.length > 0)
 		{
 			var extended = getExtendedFingers(frame);
+			// Only allow one hand, thus loop until 5 only
 			for(var j=0; j < 5; j++)
 			{
+				// Also only update the extended fingers
 				if(extended[j] === 1){
-					var pointable = frame.pointables[j];
-					var leapPoint = pointable.stabilizedTipPosition;
-					var normalizedPoint = iBox.normalizePoint(leapPoint, true);
-					var left = normalizedPoint[0] * width;
-    				var top = (1 - normalizedPoint[1]) * height;
+					var pointable = frame.pointables[j]; // Get the fingers
+					var leapPoint = pointable.stabilizedTipPosition; // Stabalize the tip position
+					var normalizedPoint = iBox.normalizePoint(leapPoint, true); // Normalize them [0 to 1]
+					var left = normalizedPoint[0] * width; // Get the x axis
+    					var top = (1 - normalizedPoint[1]) * height; // Get the y axis
 
+					// Perfom css, and translate the finger according to the axis, exclude z-axis because of 2d implementation
 					$('#finger' + (j+1)).css({
 						'top': 0,
 						'left': 0,
@@ -230,31 +240,35 @@ function click(frame){
 
 	if(frame.valid)
 	{
-		var iBox = frame.interactionBox;
+		// Get the finger, take the stabalized tip position, and normalize it
+		var iBox = frame.interactionBox; // Get the virtual space
 
-		var pointable = frame.pointables[1];
-		var leapPoint = pointable.stabilizedTipPosition;
-		var normalizedPoint = iBox.normalizePoint(leapPoint, true);
-		var left = normalizedPoint[0] * width;
-		var top = (1 - normalizedPoint[1]) * height;
-				
+		var pointable = frame.pointables[1]; // Get index finger
+		var leapPoint = pointable.stabilizedTipPosition; // Stabalize it
+		var normalizedPoint = iBox.normalizePoint(leapPoint, true); // Normalize it
+		var left = normalizedPoint[0] * width; // Calculate the x-axis times the scale of chrome window width
+		var top = (1 - normalizedPoint[1]) * height; // Calculate the y-axis times the scale of chrome window height
+		
+		// Debugging purpose
 		//console.log('xbar:' + scrollBarX);
 		//console.log('ybar:' + scrollBarY);
+		//console.log('x:' + left.toFixed(2));
+		//console.log('y:' + top.toFixed(2));
 
-		console.log('x:' + left.toFixed(2));
-		console.log('y:' + top.toFixed(2));
-
+		// Get the element position of the HTML page according to user finger point
 		var elem = document.elementFromPoint(left, top);
+		// If element is present, and finger is on the 'touching zone' (refer leap motion docs), then proceed
 		if(elem !== null && pointable.touchZone === 'touching')
 		{
+			// When it passed a certain distance, then proceed to click the element
 			if(pointable.touchDistance < -0.35){
+				// Change the index finger color to blue
 				$('#finger' + 2).css({
 					'background-color': blue,
 					'opacity': '0.75'
 				});
 				var done = elem.click();
-				console.log(done);
-				console.log('item is clicked');
+				//console.log('item is clicked');
 			}
 		}
 		else{
@@ -264,7 +278,6 @@ function click(frame){
 			});
 		}
 	}
-	clearTimeout(timeout);
 }
 
 // Move Index, Middle, Ring, and Pinky Finger Upwards and Downwards for Scroll Event
@@ -275,17 +288,23 @@ function scroll_page(pointables)
 		return;
 	}
 
-	var finger = pointables[0];
-	var last_finger = last_frame.pointables[0];
+	// Just check the index finger translation, do not need to check all
+	var finger = pointables[0]; // Get index finger
+	var last_finger = last_frame.pointables[0]; // Get index finger from last frame
+	
+	// Stabalize them
 	var fingerStabilizedPosition = finger.stabilizedTipPosition;
 	var last_fingerStabilizedPosition = last_finger.stabilizedTipPosition;
-
+	
+	// Calculate horizontal translation
 	var horizontal_translation = 0;
 	var horizontal_delta = fingerStabilizedPosition[0] - last_fingerStabilizedPosition[0];
-
+	
+	// Calculate vertical translation
 	var vertical_translation = 0;
 	var vertical_delta = fingerStabilizedPosition[1] - last_fingerStabilizedPosition[1];
-
+	
+	// Based on translation the speed of scroll will be affected
 	if (horizontal_delta > 10)
 	{
 		horizontal_translation = scroll_speed;
@@ -303,9 +322,8 @@ function scroll_page(pointables)
 	{
 		vertical_translation = -scroll_speed;
 	}
-
+	// Call scroll function from the web api based on our translation
 	window.scrollBy(horizontal_translation, vertical_translation);
-	//clearTimeout(timeout);
 }
 
 // Swipe Both Index and Middle Finger toward Leftwards to Go Back, and Rightwards to Go Forward
@@ -316,33 +334,28 @@ function navigate_history(pointables)
 		return;
 	}
 
-	// Get index, middle, ring finger data
-	var indexFinger = pointables[0];
-	var last_indexFinger = last_frame.pointables[0];
+	// Just check the index finger translation, do not need to check all
+	var indexFinger = pointables[0]; // Get the index finger 
+	var last_indexFinger = last_frame.pointables[0]; // Get index finger
 
 	// Get the tip position
-	var indexFingertipPosition = indexFinger.tipPosition;
-	var last_indexFingertipPosition = last_indexFinger.tipPosition;
+	var indexFingertipPosition = indexFinger.tipPosition;  // Get index finger
+	var last_indexFingertipPosition = last_indexFinger.tipPosition; // Get index finger from last frame
 
 	// Calculate the horizontal translation
 	var indexFinger_horizontal_translation = indexFingertipPosition[0] - last_indexFingertipPosition[0];
 
+	// Innvoke, Go foward if the translation more than 42
 	if (indexFinger_horizontal_translation > 42 && leap_motion_settings.history === 'enabled')
 	{
 		history.go(-1);
 		console.log('Next Page');
-		while(timeout--){
-			clearTimeout(timeout);
-		}
 		return;
 	}
+	// Innvoke, Go backward if the translation less than -42
 	else if (indexFinger_horizontal_translation < -42 && leap_motion_settings.history === 'enabled')
 	{
 		history.go(1);
-		console.log('Previous Page');
-		while(timeout--){
-			clearTimeout(timeout);
-		}
 		return;
 	}
 }
@@ -356,7 +369,7 @@ function open_or_close_or_switching_tab(pointables)
 		return;
 	}
 
-	// Get index, middle, ring finger data
+	// Get index finger data
 	var indexFinger = pointables[0];
 	var last_indexFinger = last_frame.pointables[0];
 
@@ -369,26 +382,21 @@ function open_or_close_or_switching_tab(pointables)
 	// Calculate the vertical translation
 	var indexFinger_vertical_translation = indexFingertipPosition[1] - last_indexFingertipPosition[1];
 
-	console.log(indexFinger_horizontal_translation);
-	console.log(indexFinger_vertical_translation);
+	// Debugging purpose
+	//console.log(indexFinger_horizontal_translation);
+	//console.log(indexFinger_vertical_translation);
 
 	// If vertical than invoke either open or close tab
 	// close tab
 	if (indexFinger_vertical_translation > 30 && leap_motion_settings.open_or_close_tab === 'enabled')
 	{
 		window.close();
-		while(timeout--){
-			clearTimeout(timeout);
-		}
 		return;
 	}
 	// open new tab
 	else if (indexFinger_vertical_translation < -40 && leap_motion_settings.open_or_close_tab === 'enabled')
 	{
 		window.open("http://www.google.com");
-		while(timeout--){
-			clearTimeout(timeout);
-		}
 		return;
 	}
 	// If horizontal than invoke either switch left or right tab
@@ -397,9 +405,6 @@ function open_or_close_or_switching_tab(pointables)
 	{
 		chrome.runtime.sendMessage({ tab_status: 'switchtabLeft' }, function(response) {
 		});
-		while(timeout--){
-			clearTimeout(timeout);
-		}
 		return;
 	}
 	// switch to right tab
@@ -407,9 +412,6 @@ function open_or_close_or_switching_tab(pointables)
 	{
 		chrome.runtime.sendMessage({ tab_status: 'switchtabRight' }, function(response) {
 		});
-		while(timeout--){
-			clearTimeout(timeout);
-		}
 		return;
 	}
 }
@@ -422,14 +424,16 @@ function zoom_page(hands)
 		return;
 	}
 
+	// Get hand data, left or right according to user preference
 	var hand = hands[0];
-	var scale = hand.scaleFactor(last_frame);
+	// Calculate the hand scale value with that to the previous frame
+	var scale = hand.scaleFactor(last_frame); // Function is from the leap motion library
 
-	// Zoom is Enabled
+	// Zoom and scale the page according to the  hand scale value
 	if(leap_motion_settings.zoom === 'enabled')
 	{
 		$('html').css({
-			'transform': 'scale(' + scale + ') translateZ(0)', /* W3C */
+			'transform': 'scale(' + scale + ') translateZ(0)',
 			'-webkit-transform': 'scale(' + scale + ') translateZ(0)',
 			'transformation-origin': 'center center'
 		});
@@ -519,6 +523,7 @@ function update_settings()
 var controller = new Leap.Controller({enableGestures: true});
 
 controller.on('connect', function() {
+	// Put 'ON' label to extension icon
 	chrome.runtime.sendMessage({ connection: 'connected' }, function(response) {
 		console.log("leapmotion:sucessful connection");
 	});
@@ -526,6 +531,7 @@ controller.on('connect', function() {
 });
 
 controller.on('deviceConnected', function() {
+	// Put 'ON' label to extension icon
 	chrome.runtime.sendMessage({ connection: 'connected' }, function(response) {
 		console.error('Leap device has been connected.');
 	});
@@ -533,6 +539,7 @@ controller.on('deviceConnected', function() {
 });
 
 controller.on('deviceDisconnected', function() {
+	// Put 'OFF' label to extension icon
 	chrome.runtime.sendMessage({ connection: 'lost' }, function(response) {
 		console.error('Leap device has been disconnected. Restart leap motion and refresh page.');
 
@@ -554,11 +561,17 @@ controller.on('deviceDisconnected', function() {
 	});
 });
 
+// Core part to recognize gesture and based on gesture invoke events
 controller.on('frame', function(frame){	
+	// last time of frame being run
 	last_poll = new Date().getTime() / 1000;
-
+	
+	// Check the user hand [left or right]
 	if(frame.hands.length > 0){
+		// Store on a variable about the hand type
 		var type = frame.hands[0].type;
+		
+		// Debugging purpose 
 		/*
 		if(type == "left"){
 			console.log("Left hand.");
@@ -568,13 +581,10 @@ controller.on('frame', function(frame){
 		*/
 	}
 
-	// Update Finger Position
+	// Update Finger Position, if user allowed it
 	if(leap_motion_settings.fingers === 'yes')
 	{
-		//var extended = getExtendedFingers(frame);
-		//var count = getExtendedFingersCount(extended);
-		//console.log(extended);
-		//console.log(count);
+		// If type of hand is the same as user prefere hand type than update the finger css
 		if(type === leap_motion_settings.user_prefer_hand){
 			update_fingers(frame); //update the pointable cursor
 		}
@@ -599,7 +609,6 @@ controller.on('frame', function(frame){
 	}
 
 	var offset = now - start_action;
-	console.log('offset:' + offset);
 
 	// If nothing is happening, reset interaction
 	if (frame.pointables === undefined)
@@ -611,33 +620,36 @@ controller.on('frame', function(frame){
 
 	// Array of indicates extended fingers
 	var extendedFingerAt = getExtendedFingers(frame);
+	
 	// Total count of extended fingers
 	var extendedFingercount = getExtendedFingersCount(extendedFingerAt);
+	
+	// Debugging purpose
 	//console.log(extendedFingerAt);
 	//console.log(extendedFingercount);
 	
-	// Look for Click Gesture
+	// Look for Click Gesture [0,1,0,0,0]
 	if (extendedFingerAt[0] === 0  && extendedFingerAt[1] === 1 && extendedFingerAt[2] === 0 && extendedFingerAt[3] === 0 && extendedFingerAt[4] === 0)
 	{
 		action = 'click';
 	}
-	// Look for Page History Navigation Gesture
+	// Look for Page History Navigation Gesture [0,1,1,0,0]
 	else if (extendedFingerAt[0] === 0  && extendedFingerAt[1] === 1 && extendedFingerAt[2] === 1 && extendedFingerAt[3] === 0 && extendedFingerAt[4] === 0)
 	{
 		action = 'navigate_history';
 	}
-	// Look for Page Scroll Gesture
+	// Look for Page Scroll Gesture [0,1,1,1,1]
 	else if (extendedFingerAt[0] === 0 && extendedFingerAt[1] === 1 && extendedFingerAt[2] === 1 && extendedFingerAt[3] === 1 && extendedFingerAt[4] === 1)
 	{
 		action = 'scroll';
 	}
 
-	// Look for Open, Close, or Switching Tab Gesture
+	// Look for Open, Close, or Switching Tab Gesture [0,1,1,1,0]
 	else if(extendedFingerAt[0] === 0 && extendedFingerAt[1] === 1 && extendedFingerAt[2] === 1 && extendedFingerAt[3] === 1 && extendedFingerAt[4] === 0)
 	{
 		action = 'open_or_close_or_switching_tab';
 	}
-	// Look for Page Zoom Gesture
+	// Look for Page Zoom Gesture [1,1,1,1,1]
 	else if (extendedFingercount === 5)
 	{
 		action = 'zoom';
@@ -649,12 +661,12 @@ controller.on('frame', function(frame){
 		clearTimeout(timeout);
 	}
 
-	//console.log(action);
-
+	// If the action is the same then allow the respective event to be executed
 	if(action === last_action && offset >= delay_between_actions)
 	{
 		intent = true;
 	}
+	// Else prevent it
 	else if(action !== last_action && offset >= delay_between_actions)
 	{
 		intent = false;
@@ -692,11 +704,10 @@ controller.on('frame', function(frame){
 		}
 	}
 
+	// Reset all things if frame is not avalid
 	if (frame !== undefined && frame.pointables !== undefined && frame.pointables.length > 0)
 	{
 		last_frame = frame;
 		last_action = action;
 	}
 });
-
-controller.connect();
