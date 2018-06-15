@@ -36,13 +36,13 @@ Instructions:
 Configuration Options:
 ---
 
-* __Prefered Hand__: Choose User Prefered Hand, Left or Right  _[ **Right**, Left ]_
+* __Prefered Hand__: Choose User Prefered Hand, Left or Right _[ **Right**, Left ]_
 * __Show Fingers__: Display Finger Locations on Screen _[ **Yes**, No ]_
 * __Finger Colors__: Colors Used to Indicate Fingers _[ **Rainbow**, Leap Green, Dark, Light ]_
-* __Click__:  Move Index Finger towards Front for Click Event_[ **Enabled**, Disabled ]_
-* __Page Scrolling__:  Two Fingers to Scroll Page _[ **Enabled**, Disabled ]_
-* __History Swipe__: Open Hand Swipe Left to go Back, Right to go Forward _[ **Enabled**, Disabled ]_
-* __Open or Close Tab__:  Swipe Index, Middle, and Ring Finger Upwards to Open Tab or Downwards to Close Tab  _[ **Enabled**, Disabled ]_
+* __Click__:  Move Index Finger towards Front for Click Event _[ **Enabled**, Disabled ]_
+* __Page Scrolling__:  Move Index, Middle, Ring, and Pinky Finger Upwards and Downwards for Scroll Event _[ **Enabled**, Disabled ]_
+* __History Swipe__: Swipe Both Index and Middle Finger toward Leftwards to Go Back, and Rightwards to Go Forward _[ **Enabled**, Disabled ]_
+* __Open or Close Tab__:  Swipe Index, Middle, and Ring Finger Upwards to Open Tab or Downwards to Close Tab _[ **Enabled**, Disabled ]_
 * __Switch Tab__:  Swipe Index, Middle, and Ring Finger Leftwards for Left Tab or Rightwards for Right Tab _[ **Enabled**, Disabled ]_
 * __Page Zoom__: Experimental:  Open Hand and Pinch/Zoom with All Fingers _[ Enabled, **Disabled** ]_
 
