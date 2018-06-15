@@ -9,7 +9,7 @@ function save_options()
 		'leap_motion_scrolling': jQuery('#scrolling').val(),
 		'leap_motion_history': jQuery('#history').val(),
 		'leap_motion_open_or_close_tab': jQuery('#open_or_close_tab').val(),
-		'leap_motion_switchTab': jQuery('#switch_tab').val(),
+		'leap_motion_switch_tab': jQuery('#switch_tab').val(),
 		'leap_motion_zoom': jQuery('#zoom').val()
 	});
 
@@ -30,7 +30,7 @@ function reset_options()
 		'leap_motion_scrolling': 'enabled',
 		'leap_motion_history': 'enabled',
 		'leap_motion_open_or_close_tab': 'enabled',
-		'leap_motion_switchTab': 'enabled',		
+		'leap_motion_switch_tab': 'enabled',		
 		'leap_motion_zoom': 'disabled'
 	});
 
@@ -137,10 +137,10 @@ function restore_options()
 	});
 
 	// Fetch Leap Motion Settings for Switching Tab
-	chrome.storage.local.get('leap_motion_switchTab', function(fetchedData) {
-		if(typeof fetchedData.leap_motion_switchTab !== 'undefined')
+	chrome.storage.local.get('leap_motion_switch_tab', function(fetchedData) {
+		if(typeof fetchedData.leap_motion_switch_tab !== 'undefined')
 		{
-			leap_motion_settings.switch_tab = fetchedData.leap_motion_switchTab;
+			leap_motion_settings.switch_tab = fetchedData.leap_motion_switch_tab;
 		}
 
 		jQuery('#switch_tab').val(leap_motion_settings.switch_tab);
