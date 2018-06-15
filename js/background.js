@@ -1,6 +1,8 @@
+// This page it to use the chrome api in the manifest page we gave permission for 'tabs' and 'storage'
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse)
 	{
+		// All of the current status of tab
 		if (request.tab_status == 'current')
 		{
 			sendResponse({
@@ -10,18 +12,21 @@ chrome.runtime.onMessage.addListener(
 				url: sender.tab.url
 			});
 		}
+		// The action if connection was lost
 		else if(request.connection == 'lost')
 		{
 			chrome.browserAction.setBadgeText({text: "OFF"});
 
 			sendResponse({ connection: 'lost' });
 		}
+		// The action if connection was established
 		else if(request.connection == 'connected')
 		{
 			chrome.browserAction.setBadgeText({text: "ON"});
 			
 			sendResponse({ connection: 'connected' });
 		}
+		// For the switch tab right
 		else if(request.tab_status == 'switchtabRight'){
 			chrome.tabs.query({
 				currentWindow: true,
@@ -48,6 +53,7 @@ chrome.runtime.onMessage.addListener(
 			});
 			sendResponse({ connection: 'switchtabRight' });
 		}
+		// For the switch tab left
 		else if(request.tab_status == 'switchtabLeft'){
 			chrome.tabs.query({
 				currentWindow: true,
